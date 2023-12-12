@@ -62,22 +62,16 @@ func Test_WhenNoValidationErrorOccurred_ShoukdAddProduct(t *testing.T) {
 	})
 }
 
-func Test_WhenDiscountOccurred_ShoukdAddProduct(t *testing.T) {
+func Test_WhenDiscountIsHigherThan70_ShouldnotAddProduct(t *testing.T) {
 	t.Run("WhenNoValidationErrorOccurred_ShoukdAddProduct", func(t *testing.T) {
-		productService.Add(model.ProductCreate{
+		err := productService.Add(model.ProductCreate{
 			Name:     "Ütü",
 			Price:    2000.0,
-			Discount: 50,
+			Discount: 75,
 			Store:    "ABC TECH",
 		})
 		actualProducts := productService.GetAllProducts()
-		assert.Equal(t, 3, len(actualProducts))
-		assert.Equal(t, domain.Product{
-			Id:       3,
-			Name:     "Ütü",
-			Price:    2000.0,
-			Discount: 50,
-			Store:    "ABC TECH",
-		}, actualProducts[len(actualProducts)-1])
+		assert.Equal(t, 2, len(actualProducts))
+		assert.Equal(t, "discount cannot be greater than 70", err.Error())
 	})
 }
